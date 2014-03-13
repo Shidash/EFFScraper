@@ -1,6 +1,7 @@
 require 'nokogiri'
 require 'open-uri'
 require 'json'
+require 'uploadconvert'
 
 class EFFScraper
   def initialize(url)
@@ -43,20 +44,24 @@ class EFFScraper
       # Gets link to document and file
       l.css("a").each do |a|
         if a.text == "[PDF]"
-          dochash["url"] = a["href"]
-          dochash["file"] = open(dochash["url"])
-          # Get text of file with UpdateConvert
-          # Get metadata of file with UpdateConvert
+          dochash[:url] = a["href"]
+          `wget #{dochash[:url]}` 
+          path = dochash[:url].split("/")
+          dochash[:path] = path[path.length-1].chomp.strip
         end
       end
+     print 
 
-      # Gets date and title
-      dochash["date"] = l.css("span.date-display-single").text
-      dochash["title"] = l.css("a")[1].text
+      # Get date and title                                                      
+      dochash[:doc_date] = l.css("span.date-display-single").text
+      dochash[:title] = l.css("a")[1].text
+
+      # Extract metadata and text
+      u = UploadConvert.new(dochash[:path])
+      metadata = u.extractMetadataPDF
+      metadata.each{|k, v| dochash[k] = v}
+      dochash[:text] = u.detectPDFType
       @casearray.push(dochash)
     end
   end
 end
-
-e = EFFScraper.new("https://www.eff.org/cases/al-haramain")
-puts e.scrapeCase

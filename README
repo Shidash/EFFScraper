@@ -1,0 +1,5 @@
+This gem scrapes all the documents for any EFF case you put in a URL for and then extracts the plain text and metadata.
+
+To use-
+e = EFFScraper.new("caseurl")
+e.scrapeCase
