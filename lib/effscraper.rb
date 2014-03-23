@@ -45,23 +45,25 @@ class EFFScraper
       l.css("a").each do |a|
         if a.text == "[PDF]"
           dochash[:url] = a["href"]
-          `wget #{dochash[:url]}` 
+          `wget -P public/uploads #{dochash[:url]}` 
           path = dochash[:url].split("/")
-          dochash[:path] = path[path.length-1].chomp.strip
+          dochash[:path] = "public/uploads/" + path[path.length-1].chomp.strip
         end
       end
-     print 
 
       # Get date and title                                                      
       dochash[:doc_date] = l.css("span.date-display-single").text
       dochash[:title] = l.css("a")[1].text
 
       # Extract metadata and text
-      u = UploadConvert.new(dochash[:path])
-      metadata = u.extractMetadataPDF
-      metadata.each{|k, v| dochash[k] = v}
-      dochash[:text] = u.detectPDFType
-      @casearray.push(dochash)
+      begin
+        u = UploadConvert.new(dochash[:path])
+        metadata = u.extractMetadataPDF
+        metadata.each{|k, v| dochash[k] = v}
+        dochash[:text] = u.detectPDFType
+        @casearray.push(dochash)
+      rescue
+      end
     end
   end
 end

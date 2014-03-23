@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name        = 'effscraper'
-  s.version     = '0.0.1'
-  s.date        = '2014-03-13'
+  s.version     = '0.0.4'
+  s.date        = '2014-03-23'
   s.summary     = "Scrapes, extracts text, extracts metadata from EFF court documents"
   s.description = "Scrapes EFF court documents then extracts the plaintext and metadata."
   s.authors     = ["M. C. McGrath"]
